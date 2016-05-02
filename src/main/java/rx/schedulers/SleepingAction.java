@@ -18,6 +18,9 @@ package rx.schedulers;
 import rx.Scheduler;
 import rx.functions.Action0;
 
+/**
+ * 这个implement了Action0，在它的call方法中进行了对延时进行了Thread.sleep操作。注意会阻塞线程。
+ * */
 /* package */class SleepingAction implements Action0 {
     private final Action0 underlying;
     private final Scheduler.Worker innerScheduler;

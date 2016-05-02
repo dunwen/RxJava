@@ -63,6 +63,7 @@ public final class Subscriptions {
     }
 
     /**
+     * 创建一个subscription，当解除订阅时会调用传入的action0回调
      * Creates and returns a {@link Subscription} that invokes the given {@link Action0} when unsubscribed.
      * 
      * @param unsubscribe

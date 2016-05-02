@@ -1,11 +1,11 @@
 /**
  * Copyright 2015 Netflix, Inc.
- * 
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
  * compliance with the License. You may obtain a copy of the License at
- * 
+ * <p>
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * <p>
  * Unless required by applicable law or agreed to in writing, software distributed under the License is
  * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See
  * the License for the specific language governing permissions and limitations under the License.
@@ -49,10 +49,23 @@ import rx.subscriptions.Subscriptions;
  * <p>
  * For more information see the <a href="http://reactivex.io/documentation/observable.html">ReactiveX
  * documentation</a>.
- * 
+ *
  * @param <T>
  *            the type of the item emitted by the Single
  * @since (If this class graduates from "Experimental" replace this parenthetical with the release number)
+ *
+ *
+ *
+ * Single类似于Observable，不同的是，它总是只发射一个值，或者一个错误通知，而不是发射一系列的值。
+
+   因此，不同于Observable需要三个方法onNext, onError, onCompleted，订阅Single只需要两个方法：
+
+   onSuccess - Single发射单个的值到这个方法
+   onError - 如果无法发射需要的值，Single发射一个Throwable对象到这个方法
+   Single只会调用这两个方法中的一个，而且只会调用一次，调用了任何一个方法之后，订阅关系终止
+ *
+ *
+ *
  */
 @Beta
 public class Single<T> {
@@ -64,7 +77,7 @@ public class Single<T> {
      * <p>
      * <em>Note:</em> Use {@link #create(OnSubscribe)} to create a Single, instead of this constructor,
      * unless you specifically have a need for inheritance.
-     * 
+     *
      * @param f
      *            {@code OnExecute} to be executed when {@code execute(SingleSubscriber)} or
      *            {@code subscribe(Subscriber)} is called
@@ -120,7 +133,7 @@ public class Single<T> {
      * <dt><b>Scheduler:</b></dt>
      * <dd>{@code create} does not operate by default on a particular {@link Scheduler}.</dd>
      * </dl>
-     * 
+     *
      * @param <T>
      *            the type of the item that this Single emits
      * @param f
@@ -156,7 +169,7 @@ public class Single<T> {
      * <dt><b>Scheduler:</b></dt>
      * <dd>{@code lift} does not operate by default on a particular {@link Scheduler}.</dd>
      * </dl>
-     * 
+     *
      * @param lift
      *            the Operator that implements the Single-operating function to be applied to the source Single
      * @return a Single that is the result of applying the lifted Operator to the source Single
@@ -201,7 +214,7 @@ public class Single<T> {
      * <dt><b>Scheduler:</b></dt>
      * <dd>{@code compose} does not operate by default on a particular {@link Scheduler}.</dd>
      * </dl>
-     * 
+     *
      * @param transformer
      *            implements the function that transforms the source Single
      * @return the source Single, transformed by the transformer function
@@ -214,7 +227,7 @@ public class Single<T> {
 
     /**
      * Transformer function used by {@link #compose}.
-     * 
+     *
      * @warn more complete description needed
      */
     public interface Transformer<T, R> extends Func1<Single<T>, Single<R>> {
@@ -233,7 +246,7 @@ public class Single<T> {
 
     /**
      * INTERNAL: Used with lift and operators.
-     * 
+     *
      * Converts the source {@code Single<T>} into an {@code Single<Observable<T>>} that emits an Observable
      * that emits the same emission as the source Single.
      * <p>
@@ -242,7 +255,7 @@ public class Single<T> {
      * <dt><b>Scheduler:</b></dt>
      * <dd>{@code nest} does not operate by default on a particular {@link Scheduler}.</dd>
      * </dl>
-     * 
+     *
      * @return a Single that emits an Observable that emits the same item as the source Single
      * @see <a href="http://reactivex.io/documentation/operators/to.html">ReactiveX operators documentation: To</a>
      */
@@ -305,7 +318,7 @@ public class Single<T> {
      * <dt><b>Scheduler:</b></dt>
      * <dd>{@code concat} does not operate by default on a particular {@link Scheduler}.</dd>
      * </dl>
-     * 
+     *
      * @param t1
      *            a Single to be concatenated
      * @param t2
@@ -413,7 +426,7 @@ public class Single<T> {
      * <dt><b>Scheduler:</b></dt>
      * <dd>{@code concat} does not operate by default on a particular {@link Scheduler}.</dd>
      * </dl>
-     * 
+     *
      * @param t1
      *            a Single to be concatenated
      * @param t2
@@ -445,7 +458,7 @@ public class Single<T> {
      * <dt><b>Scheduler:</b></dt>
      * <dd>{@code concat} does not operate by default on a particular {@link Scheduler}.</dd>
      * </dl>
-     * 
+     *
      * @param t1
      *            a Single to be concatenated
      * @param t2
@@ -480,7 +493,7 @@ public class Single<T> {
      * <dt><b>Scheduler:</b></dt>
      * <dd>{@code error} does not operate by default on a particular {@link Scheduler}.</dd>
      * </dl>
-     * 
+     *
      * @param exception
      *            the particular Throwable to pass to {@link SingleSubscriber#onError onError}
      * @param <T>
@@ -514,7 +527,7 @@ public class Single<T> {
      * <dt><b>Scheduler:</b></dt>
      * <dd>{@code from} does not operate by default on a particular {@link Scheduler}.</dd>
      * </dl>
-     * 
+     *
      * @param future
      *            the source {@link Future}
      * @param <T>
@@ -524,7 +537,7 @@ public class Single<T> {
      * @see <a href="http://reactivex.io/documentation/operators/from.html">ReactiveX operators documentation: From</a>
      */
     public static <T> Single<T> from(Future<? extends T> future) {
-        return new Single<T>((Observable.OnSubscribe<T>)OnSubscribeToObservableFuture.toObservableFuture(future));
+        return new Single<T>((Observable.OnSubscribe<T>) OnSubscribeToObservableFuture.toObservableFuture(future));
     }
 
     /**
@@ -541,7 +554,7 @@ public class Single<T> {
      * <dt><b>Scheduler:</b></dt>
      * <dd>{@code from} does not operate by default on a particular {@link Scheduler}.</dd>
      * </dl>
-     * 
+     *
      * @param future
      *            the source {@link Future}
      * @param timeout
@@ -555,7 +568,7 @@ public class Single<T> {
      * @see <a href="http://reactivex.io/documentation/operators/from.html">ReactiveX operators documentation: From</a>
      */
     public static <T> Single<T> from(Future<? extends T> future, long timeout, TimeUnit unit) {
-        return new Single<T>((Observable.OnSubscribe<T>)OnSubscribeToObservableFuture.toObservableFuture(future, timeout, unit));
+        return new Single<T>((Observable.OnSubscribe<T>) OnSubscribeToObservableFuture.toObservableFuture(future, timeout, unit));
     }
 
     /**
@@ -570,7 +583,7 @@ public class Single<T> {
      * <dt><b>Scheduler:</b></dt>
      * <dd>you specify which {@link Scheduler} this operator will use</dd>
      * </dl>
-     * 
+     *
      * @param future
      *            the source {@link Future}
      * @param scheduler
@@ -583,7 +596,7 @@ public class Single<T> {
      * @see <a href="http://reactivex.io/documentation/operators/from.html">ReactiveX operators documentation: From</a>
      */
     public static <T> Single<T> from(Future<? extends T> future, Scheduler scheduler) {
-        return new Single<T>((Observable.OnSubscribe<T>)OnSubscribeToObservableFuture.toObservableFuture(future)).subscribeOn(scheduler);
+        return new Single<T>((Observable.OnSubscribe<T>) OnSubscribeToObservableFuture.toObservableFuture(future)).subscribeOn(scheduler);
     }
 
     /**
@@ -634,7 +647,7 @@ public class Single<T> {
      * <dt><b>Scheduler:</b></dt>
      * <dd>{@code just} does not operate by default on a particular {@link Scheduler}.</dd>
      * </dl>
-     * 
+     *
      * @param value
      *            the item to emit
      * @param <T>
@@ -699,7 +712,7 @@ public class Single<T> {
      * <dt><b>Scheduler:</b></dt>
      * <dd>{@code merge} does not operate by default on a particular {@link Scheduler}.</dd>
      * </dl>
-     * 
+     *
      * @param t1
      *            a Single to be merged
      * @param t2
@@ -722,7 +735,7 @@ public class Single<T> {
      * <dt><b>Scheduler:</b></dt>
      * <dd>{@code merge} does not operate by default on a particular {@link Scheduler}.</dd>
      * </dl>
-     * 
+     *
      * @param t1
      *            a Single to be merged
      * @param t2
@@ -747,7 +760,7 @@ public class Single<T> {
      * <dt><b>Scheduler:</b></dt>
      * <dd>{@code merge} does not operate by default on a particular {@link Scheduler}.</dd>
      * </dl>
-     * 
+     *
      * @param t1
      *            a Single to be merged
      * @param t2
@@ -774,7 +787,7 @@ public class Single<T> {
      * <dt><b>Scheduler:</b></dt>
      * <dd>{@code merge} does not operate by default on a particular {@link Scheduler}.</dd>
      * </dl>
-     * 
+     *
      * @param t1
      *            a Single to be merged
      * @param t2
@@ -803,7 +816,7 @@ public class Single<T> {
      * <dt><b>Scheduler:</b></dt>
      * <dd>{@code merge} does not operate by default on a particular {@link Scheduler}.</dd>
      * </dl>
-     * 
+     *
      * @param t1
      *            a Single to be merged
      * @param t2
@@ -834,7 +847,7 @@ public class Single<T> {
      * <dt><b>Scheduler:</b></dt>
      * <dd>{@code merge} does not operate by default on a particular {@link Scheduler}.</dd>
      * </dl>
-     * 
+     *
      * @param t1
      *            a Single to be merged
      * @param t2
@@ -867,7 +880,7 @@ public class Single<T> {
      * <dt><b>Scheduler:</b></dt>
      * <dd>{@code merge} does not operate by default on a particular {@link Scheduler}.</dd>
      * </dl>
-     * 
+     *
      * @param t1
      *            a Single to be merged
      * @param t2
@@ -902,7 +915,7 @@ public class Single<T> {
      * <dt><b>Scheduler:</b></dt>
      * <dd>{@code merge} does not operate by default on a particular {@link Scheduler}.</dd>
      * </dl>
-     * 
+     *
      * @param t1
      *            a Single to be merged
      * @param t2
@@ -937,7 +950,7 @@ public class Single<T> {
      * <dt><b>Scheduler:</b></dt>
      * <dd>{@code zip} does not operate by default on a particular {@link Scheduler}.</dd>
      * </dl>
-     * 
+     *
      * @param s1
      *            the first source Single
      * @param s2
@@ -949,7 +962,7 @@ public class Single<T> {
      * @see <a href="http://reactivex.io/documentation/operators/zip.html">ReactiveX operators documentation: Zip</a>
      */
     public static <T1, T2, R> Single<R> zip(Single<? extends T1> s1, Single<? extends T2> s2, final Func2<? super T1, ? super T2, ? extends R> zipFunction) {
-        return SingleOperatorZip.zip(new Single[] {s1, s2}, new FuncN<R>() {
+        return SingleOperatorZip.zip(new Single[]{s1, s2}, new FuncN<R>() {
             @Override
             public R call(Object... args) {
                 return zipFunction.call((T1) args[0], (T2) args[1]);
@@ -966,7 +979,7 @@ public class Single<T> {
      * <dt><b>Scheduler:</b></dt>
      * <dd>{@code zip} does not operate by default on a particular {@link Scheduler}.</dd>
      * </dl>
-     * 
+     *
      * @param s1
      *            the first source Single
      * @param s2
@@ -980,7 +993,7 @@ public class Single<T> {
      * @see <a href="http://reactivex.io/documentation/operators/zip.html">ReactiveX operators documentation: Zip</a>
      */
     public static <T1, T2, T3, R> Single<R> zip(Single<? extends T1> s1, Single<? extends T2> s2, Single<? extends T3> s3, final Func3<? super T1, ? super T2, ? super T3, ? extends R> zipFunction) {
-        return SingleOperatorZip.zip(new Single[] {s1, s2, s3}, new FuncN<R>() {
+        return SingleOperatorZip.zip(new Single[]{s1, s2, s3}, new FuncN<R>() {
             @Override
             public R call(Object... args) {
                 return zipFunction.call((T1) args[0], (T2) args[1], (T3) args[2]);
@@ -997,7 +1010,7 @@ public class Single<T> {
      * <dt><b>Scheduler:</b></dt>
      * <dd>{@code zip} does not operate by default on a particular {@link Scheduler}.</dd>
      * </dl>
-     * 
+     *
      * @param s1
      *            the first source Single
      * @param s2
@@ -1013,7 +1026,7 @@ public class Single<T> {
      * @see <a href="http://reactivex.io/documentation/operators/zip.html">ReactiveX operators documentation: Zip</a>
      */
     public static <T1, T2, T3, T4, R> Single<R> zip(Single<? extends T1> s1, Single<? extends T2> s2, Single<? extends T3> s3, Single<? extends T4> s4, final Func4<? super T1, ? super T2, ? super T3, ? super T4, ? extends R> zipFunction) {
-        return SingleOperatorZip.zip(new Single[] {s1, s2, s3, s4}, new FuncN<R>() {
+        return SingleOperatorZip.zip(new Single[]{s1, s2, s3, s4}, new FuncN<R>() {
             @Override
             public R call(Object... args) {
                 return zipFunction.call((T1) args[0], (T2) args[1], (T3) args[2], (T4) args[3]);
@@ -1030,7 +1043,7 @@ public class Single<T> {
      * <dt><b>Scheduler:</b></dt>
      * <dd>{@code zip} does not operate by default on a particular {@link Scheduler}.</dd>
      * </dl>
-     * 
+     *
      * @param s1
      *            the first source Single
      * @param s2
@@ -1048,7 +1061,7 @@ public class Single<T> {
      * @see <a href="http://reactivex.io/documentation/operators/zip.html">ReactiveX operators documentation: Zip</a>
      */
     public static <T1, T2, T3, T4, T5, R> Single<R> zip(Single<? extends T1> s1, Single<? extends T2> s2, Single<? extends T3> s3, Single<? extends T4> s4, Single<? extends T5> s5, final Func5<? super T1, ? super T2, ? super T3, ? super T4, ? super T5, ? extends R> zipFunction) {
-        return SingleOperatorZip.zip(new Single[] {s1, s2, s3, s4, s5}, new FuncN<R>() {
+        return SingleOperatorZip.zip(new Single[]{s1, s2, s3, s4, s5}, new FuncN<R>() {
             @Override
             public R call(Object... args) {
                 return zipFunction.call((T1) args[0], (T2) args[1], (T3) args[2], (T4) args[3], (T5) args[4]);
@@ -1065,7 +1078,7 @@ public class Single<T> {
      * <dt><b>Scheduler:</b></dt>
      * <dd>{@code zip} does not operate by default on a particular {@link Scheduler}.</dd>
      * </dl>
-     * 
+     *
      * @param s1
      *            the first source Single
      * @param s2
@@ -1086,7 +1099,7 @@ public class Single<T> {
      */
     public static <T1, T2, T3, T4, T5, T6, R> Single<R> zip(Single<? extends T1> s1, Single<? extends T2> s2, Single<? extends T3> s3, Single<? extends T4> s4, Single<? extends T5> s5, Single<? extends T6> s6,
                                                             final Func6<? super T1, ? super T2, ? super T3, ? super T4, ? super T5, ? super T6, ? extends R> zipFunction) {
-        return SingleOperatorZip.zip(new Single[] {s1, s2, s3, s4, s5, s6}, new FuncN<R>() {
+        return SingleOperatorZip.zip(new Single[]{s1, s2, s3, s4, s5, s6}, new FuncN<R>() {
             @Override
             public R call(Object... args) {
                 return zipFunction.call((T1) args[0], (T2) args[1], (T3) args[2], (T4) args[3], (T5) args[4], (T6) args[5]);
@@ -1103,7 +1116,7 @@ public class Single<T> {
      * <dt><b>Scheduler:</b></dt>
      * <dd>{@code zip} does not operate by default on a particular {@link Scheduler}.</dd>
      * </dl>
-     * 
+     *
      * @param s1
      *            the first source Single
      * @param s2
@@ -1126,7 +1139,7 @@ public class Single<T> {
      */
     public static <T1, T2, T3, T4, T5, T6, T7, R> Single<R> zip(Single<? extends T1> s1, Single<? extends T2> s2, Single<? extends T3> s3, Single<? extends T4> s4, Single<? extends T5> s5, Single<? extends T6> s6, Single<? extends T7> s7,
                                                                 final Func7<? super T1, ? super T2, ? super T3, ? super T4, ? super T5, ? super T6, ? super T7, ? extends R> zipFunction) {
-        return SingleOperatorZip.zip(new Single[] {s1, s2, s3, s4, s5, s6, s7}, new FuncN<R>() {
+        return SingleOperatorZip.zip(new Single[]{s1, s2, s3, s4, s5, s6, s7}, new FuncN<R>() {
             @Override
             public R call(Object... args) {
                 return zipFunction.call((T1) args[0], (T2) args[1], (T3) args[2], (T4) args[3], (T5) args[4], (T6) args[5], (T7) args[6]);
@@ -1143,7 +1156,7 @@ public class Single<T> {
      * <dt><b>Scheduler:</b></dt>
      * <dd>{@code zip} does not operate by default on a particular {@link Scheduler}.</dd>
      * </dl>
-     * 
+     *
      * @param s1
      *            the first source Single
      * @param s2
@@ -1168,7 +1181,7 @@ public class Single<T> {
      */
     public static <T1, T2, T3, T4, T5, T6, T7, T8, R> Single<R> zip(Single<? extends T1> s1, Single<? extends T2> s2, Single<? extends T3> s3, Single<? extends T4> s4, Single<? extends T5> s5, Single<? extends T6> s6, Single<? extends T7> s7, Single<? extends T8> s8,
                                                                     final Func8<? super T1, ? super T2, ? super T3, ? super T4, ? super T5, ? super T6, ? super T7, ? super T8, ? extends R> zipFunction) {
-        return SingleOperatorZip.zip(new Single[] {s1, s2, s3, s4, s5, s6, s7, s8}, new FuncN<R>() {
+        return SingleOperatorZip.zip(new Single[]{s1, s2, s3, s4, s5, s6, s7, s8}, new FuncN<R>() {
             @Override
             public R call(Object... args) {
                 return zipFunction.call((T1) args[0], (T2) args[1], (T3) args[2], (T4) args[3], (T5) args[4], (T6) args[5], (T7) args[6], (T8) args[7]);
@@ -1185,7 +1198,7 @@ public class Single<T> {
      * <dt><b>Scheduler:</b></dt>
      * <dd>{@code zip} does not operate by default on a particular {@link Scheduler}.</dd>
      * </dl>
-     * 
+     *
      * @param s1
      *            the first source Single
      * @param s2
@@ -1212,7 +1225,7 @@ public class Single<T> {
      */
     public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, R> Single<R> zip(Single<? extends T1> s1, Single<? extends T2> s2, Single<? extends T3> s3, Single<? extends T4> s4, Single<? extends T5> s5, Single<? extends T6> s6, Single<? extends T7> s7, Single<? extends T8> s8,
                                                                         Single<? extends T9> s9, final Func9<? super T1, ? super T2, ? super T3, ? super T4, ? super T5, ? super T6, ? super T7, ? super T8, ? super T9, ? extends R> zipFunction) {
-        return SingleOperatorZip.zip(new Single[] {s1, s2, s3, s4, s5, s6, s7, s8, s9}, new FuncN<R>() {
+        return SingleOperatorZip.zip(new Single[]{s1, s2, s3, s4, s5, s6, s7, s8, s9}, new FuncN<R>() {
             @Override
             public R call(Object... args) {
                 return zipFunction.call((T1) args[0], (T2) args[1], (T3) args[2], (T4) args[3], (T5) args[4], (T6) args[5], (T7) args[6], (T8) args[7], (T9) args[8]);
@@ -1255,7 +1268,7 @@ public class Single<T> {
      * <dt><b>Scheduler:</b></dt>
      * <dd>{@code concat} does not operate by default on a particular {@link Scheduler}.</dd>
      * </dl>
-     * 
+     *
      * @param t1
      *            a Single to be concatenated after the current
      * @return an Observable that emits the item emitted by the source Single, followed by the item emitted by
@@ -1275,7 +1288,7 @@ public class Single<T> {
      * <dt><b>Scheduler:</b></dt>
      * <dd>{@code flatMap} does not operate by default on a particular {@link Scheduler}.</dd>
      * </dl>
-     * 
+     *
      * @param func
      *            a function that, when applied to the item emitted by the source Single, returns a Single
      * @return the Single returned from {@code func} when applied to the item emitted by the source Single
@@ -1297,7 +1310,7 @@ public class Single<T> {
      * <dt><b>Scheduler:</b></dt>
      * <dd>{@code flatMapObservable} does not operate by default on a particular {@link Scheduler}.</dd>
      * </dl>
-     * 
+     *
      * @param func
      *            a function that, when applied to the item emitted by the source Single, returns an
      *            Observable
@@ -1338,7 +1351,7 @@ public class Single<T> {
      * <dt><b>Scheduler:</b></dt>
      * <dd>{@code mergeWith} does not operate by default on a particular {@link Scheduler}.</dd>
      * </dl>
-     * 
+     *
      * @param t1
      *            a Single to be merged
      * @return an Observable that emits all of the items emitted by the source Singles
@@ -1357,7 +1370,7 @@ public class Single<T> {
      * <dt><b>Scheduler:</b></dt>
      * <dd>you specify which {@link Scheduler} this operator will use</dd>
      * </dl>
-     * 
+     *
      * @param scheduler
      *            the {@link Scheduler} to notify subscribers on
      * @return the source Single modified so that its subscribers are notified on the specified
@@ -1368,7 +1381,7 @@ public class Single<T> {
      */
     public final Single<T> observeOn(Scheduler scheduler) {
         if (this instanceof ScalarSynchronousSingle) {
-            return ((ScalarSynchronousSingle<T>)this).scalarScheduleOn(scheduler);
+            return ((ScalarSynchronousSingle<T>) this).scalarScheduleOn(scheduler);
         }
         // Note that since Single emits onSuccess xor onError, 
         // there is no cut-ahead possible like with regular Observable sequences.
@@ -1394,7 +1407,7 @@ public class Single<T> {
      * <dt><b>Scheduler:</b></dt>
      * <dd>{@code onErrorReturn} does not operate by default on a particular {@link Scheduler}.</dd>
      * </dl>
-     * 
+     *
      * @param resumeFunction
      *            a function that returns an item that the new Single will emit if the source Single encounters
      *            an error
@@ -1402,7 +1415,7 @@ public class Single<T> {
      * @see <a href="http://reactivex.io/documentation/operators/catch.html">ReactiveX operators documentation: Catch</a>
      */
     public final Single<T> onErrorReturn(Func1<Throwable, ? extends T> resumeFunction) {
-        return lift((Operator<T, T>)OperatorOnErrorResumeNextViaFunction.withSingle(resumeFunction));
+        return lift((Operator<T, T>) OperatorOnErrorResumeNextViaFunction.withSingle(resumeFunction));
     }
 
     /**
@@ -1479,7 +1492,7 @@ public class Single<T> {
      * <dt><b>Scheduler:</b></dt>
      * <dd>{@code subscribe} does not operate by default on a particular {@link Scheduler}.</dd>
      * </dl>
-     * 
+     *
      * @return a {@link Subscription} reference can request the {@link Single} stop work.
      * @throws OnErrorNotImplementedException
      *             if the Single tries to call {@link Subscriber#onError}
@@ -1512,7 +1525,7 @@ public class Single<T> {
      * <dt><b>Scheduler:</b></dt>
      * <dd>{@code subscribe} does not operate by default on a particular {@link Scheduler}.</dd>
      * </dl>
-     * 
+     *
      * @param onSuccess
      *            the {@code Action1<T>} you have designed to accept the emission from the Single
      * @return a {@link Subscription} reference can request the {@link Single} stop work.
@@ -1554,7 +1567,7 @@ public class Single<T> {
      * <dt><b>Scheduler:</b></dt>
      * <dd>{@code subscribe} does not operate by default on a particular {@link Scheduler}.</dd>
      * </dl>
-     * 
+     *
      * @param onSuccess
      *            the {@code Action1<T>} you have designed to accept the emission from the Single
      * @param onError
@@ -1604,7 +1617,7 @@ public class Single<T> {
      * <dt><b>Scheduler:</b></dt>
      * <dd>{@code unsafeSubscribe} does not operate by default on a particular {@link Scheduler}.</dd>
      * </dl>
-     * 
+     *
      * @param subscriber
      *            the Subscriber that will handle the emission or notification from the Single
      */
@@ -1637,7 +1650,7 @@ public class Single<T> {
     /**
      * Subscribes an Observer to this single and returns a Subscription that allows
      * unsubscription.
-     * 
+     *
      * @param observer the Observer to subscribe
      * @return the Subscription that allows unsubscription 
      */
@@ -1651,13 +1664,14 @@ public class Single<T> {
                 observer.onNext(value);
                 observer.onCompleted();
             }
+
             @Override
             public void onError(Throwable error) {
                 observer.onError(error);
             }
         });
     }
-    
+
     /**
      * Subscribes to a Single and provides a Subscriber that implements functions to handle the item the Single
      * emits or any error notification it issues.
@@ -1679,7 +1693,7 @@ public class Single<T> {
      * <dt><b>Scheduler:</b></dt>
      * <dd>{@code subscribe} does not operate by default on a particular {@link Scheduler}.</dd>
      * </dl>
-     * 
+     *
      * @param subscriber
      *            the {@link Subscriber} that will handle the emission or notification from the Single
      * @return a {@link Subscription} reference can request the {@link Single} stop work.
@@ -1765,7 +1779,7 @@ public class Single<T> {
      * <dt><b>Scheduler:</b></dt>
      * <dd>{@code subscribe} does not operate by default on a particular {@link Scheduler}.</dd>
      * </dl>
-     * 
+     *
      * @param te
      *            the {@link SingleSubscriber} that will handle the emission or notification from the Single
      * @return a {@link Subscription} reference can request the {@link Single} stop work.
@@ -1811,7 +1825,7 @@ public class Single<T> {
      * <dt><b>Scheduler:</b></dt>
      * <dd>you specify which {@link Scheduler} this operator will use</dd>
      * </dl>
-     * 
+     *
      * @param scheduler
      *            the {@link Scheduler} to perform subscription actions on
      * @return the source Single modified so that its subscriptions happen on the specified {@link Scheduler}
@@ -1821,7 +1835,7 @@ public class Single<T> {
      */
     public final Single<T> subscribeOn(final Scheduler scheduler) {
         if (this instanceof ScalarSynchronousSingle) {
-            return ((ScalarSynchronousSingle<T>)this).scalarScheduleOn(scheduler);
+            return ((ScalarSynchronousSingle<T>) this).scalarScheduleOn(scheduler);
         }
         return create(new OnSubscribe<T>() {
             @Override
@@ -1889,6 +1903,7 @@ public class Single<T> {
                     public void onNext(T t) {
                         serial.onNext(t);
                     }
+
                     @Override
                     public void onError(Throwable e) {
                         try {
@@ -1897,6 +1912,7 @@ public class Single<T> {
                             serial.unsubscribe();
                         }
                     }
+
                     @Override
                     public void onCompleted() {
                         try {
@@ -1965,6 +1981,7 @@ public class Single<T> {
                     public void onNext(T t) {
                         serial.onNext(t);
                     }
+
                     @Override
                     public void onError(Throwable e) {
                         try {
@@ -1973,6 +1990,7 @@ public class Single<T> {
                             serial.unsubscribe();
                         }
                     }
+
                     @Override
                     public void onCompleted() {
                         try {
@@ -2042,6 +2060,7 @@ public class Single<T> {
                     public void onNext(T t) {
                         serial.onNext(t);
                     }
+
                     @Override
                     public void onError(Throwable e) {
                         try {
@@ -2050,6 +2069,7 @@ public class Single<T> {
                             serial.unsubscribe();
                         }
                     }
+
                     @Override
                     public void onCompleted() {
                         try {
@@ -2083,12 +2103,12 @@ public class Single<T> {
             }
         });
     }
-    
+
     /**
      * Converts this Single into an {@link Observable}.
      * <p>
      * <img width="640" height="305" src="https://raw.github.com/wiki/ReactiveX/RxJava/images/rx-operators/Single.toObservable.png" alt="">
-     * 
+     *
      * @return an {@link Observable} that emits a single item T.
      */
     public final Observable<T> toObservable() {
@@ -2113,7 +2133,7 @@ public class Single<T> {
      * @see <a href="http://reactivex.io/documentation/completable.html">ReactiveX documentation:
      *      Completable</a>.
      * @since (if this graduates from Experimental/Beta to supported, replace this parenthetical
-     *        with the release number).
+     *with the release number).
      */
     @Experimental
     public final Completable toCompletable() {
@@ -2130,7 +2150,7 @@ public class Single<T> {
      * <dt><b>Scheduler:</b></dt>
      * <dd>This version of {@code timeout} operates by default on the {@code computation} {@link Scheduler}.</dd>
      * </dl>
-     * 
+     *
      * @param timeout
      *            maximum duration before the Single times out
      * @param timeUnit
@@ -2153,7 +2173,7 @@ public class Single<T> {
      * <dt><b>Scheduler:</b></dt>
      * <dd>you specify which {@link Scheduler} this operator will use</dd>
      * </dl>
-     * 
+     *
      * @param timeout
      *            maximum duration before the Single times out
      * @param timeUnit
@@ -2178,7 +2198,7 @@ public class Single<T> {
      * <dt><b>Scheduler:</b></dt>
      * <dd>This version of {@code timeout} operates by default on the {@code computation} {@link Scheduler}.</dd>
      * </dl>
-     * 
+     *
      * @param timeout
      *            maximum time before a timeout occurs
      * @param timeUnit
@@ -2202,7 +2222,7 @@ public class Single<T> {
      * <dt><b>Scheduler:</b></dt>
      * <dd>you specify which {@link Scheduler} this operator will use</dd>
      * </dl>
-     * 
+     *
      * @param timeout
      *            maximum duration before a timeout occurs
      * @param timeUnit
@@ -2216,7 +2236,7 @@ public class Single<T> {
      */
     public final Single<T> timeout(long timeout, TimeUnit timeUnit, Single<? extends T> other, Scheduler scheduler) {
         if (other == null) {
-            other = Single.<T> error(new TimeoutException());
+            other = Single.<T>error(new TimeoutException());
         }
         return lift(new OperatorTimeout<T>(timeout, timeUnit, asObservable(other), scheduler));
     }
@@ -2245,7 +2265,7 @@ public class Single<T> {
      * <dt><b>Scheduler:</b></dt>
      * <dd>{@code zipWith} does not operate by default on a particular {@link Scheduler}.</dd>
      * </dl>
-     * 
+     *
      * @param <T2>
      *            the type of items emitted by the {@code other} Single
      * @param <R>
@@ -2260,7 +2280,7 @@ public class Single<T> {
      * @see <a href="http://reactivex.io/documentation/operators/zip.html">ReactiveX operators documentation: Zip</a>
      */
     public final <T2, R> Single<R> zipWith(Single<? extends T2> other, Func2<? super T, ? super T2, ? extends R> zipFunction) {
-        return (Single<R>)zip(this, other, zipFunction);
+        return (Single<R>) zip(this, other, zipFunction);
     }
 
     /**
@@ -2299,7 +2319,7 @@ public class Single<T> {
 
         return lift(new OperatorDoOnEach<T>(observer));
     }
-    
+
     /**
      * Modifies the source {@link Single} so that it invokes an action when it calls {@code onSuccess}.
      * <p>
@@ -2633,7 +2653,7 @@ public class Single<T> {
      *  <dt><b>Scheduler:</b></dt>
      *  <dd>{@code using} does not operate by default on a particular {@link Scheduler}.</dd>
      * </dl>
-     * 
+     *
      * @param resourceFactory
      *            the factory function to create a resource object that depends on the Single
      * @param singleFactory
@@ -2650,7 +2670,7 @@ public class Single<T> {
             final Action1<? super Resource> disposeAction) {
         return using(resourceFactory, observableFactory, disposeAction, false);
     }
-    
+
     /**
      * Constructs an Single that creates a dependent resource object which is disposed of just before 
      * termination if you have set {@code disposeEagerly} to {@code true} and unsubscription does not occur
@@ -2663,7 +2683,7 @@ public class Single<T> {
      *  <dt><b>Scheduler:</b></dt>
      *  <dd>{@code using} does not operate by default on a particular {@link Scheduler}.</dd>
      * </dl>
-     * 
+     *
      * @warn "Backpressure Support" section missing from javadoc
      * @param resourceFactory
      *            the factory function to create a resource object that depends on the Single

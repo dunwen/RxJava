@@ -25,6 +25,8 @@ import java.util.concurrent.Executor;
 
 /**
  * Static factory methods for creating Schedulers.
+ *
+ * 创建调度器的工厂。
  */
 public final class Schedulers {
 
@@ -61,7 +63,9 @@ public final class Schedulers {
 
     /**
      * Creates and returns a {@link Scheduler} that executes work immediately on the current thread.
-     * 
+     *
+     * 创建并返回一个执行任务在当前线程的调度器。
+     *
      * @return an {@link ImmediateScheduler} instance
      */
     public static Scheduler immediate() {
@@ -71,7 +75,11 @@ public final class Schedulers {
     /**
      * Creates and returns a {@link Scheduler} that queues work on the current thread to be executed after the
      * current work completes.
-     * 
+     *
+     * 返回一个具有队列的调度器
+     *
+     * 当其它排队的任务完成后，在当前线程排队开始执行。
+     *
      * @return a {@link TrampolineScheduler} instance
      */
     public static Scheduler trampoline() {
@@ -82,6 +90,8 @@ public final class Schedulers {
      * Creates and returns a {@link Scheduler} that creates a new {@link Thread} for each unit of work.
      * <p>
      * Unhandled errors will be delivered to the scheduler Thread's {@link java.lang.Thread.UncaughtExceptionHandler}.
+     *
+     * 	为每个任务创建一个新线程的调度器
      *
      * @return a {@link NewThreadScheduler} instance
      */
@@ -99,6 +109,9 @@ public final class Schedulers {
      * Unhandled errors will be delivered to the scheduler Thread's {@link java.lang.Thread.UncaughtExceptionHandler}.
      *
      * @return a {@link Scheduler} meant for computation-bound work
+     *
+     *
+     * 用于计算任务，如事件循环或和回调处理，不要用于IO操作(IO操作请使用Schedulers.io())；默认线程数等于处理器的数量
      */
     public static Scheduler computation() {
         return INSTANCE.computationScheduler;
@@ -116,6 +129,10 @@ public final class Schedulers {
      * Unhandled errors will be delivered to the scheduler Thread's {@link java.lang.Thread.UncaughtExceptionHandler}.
      *
      * @return a {@link Scheduler} meant for IO-bound work
+     *
+     * 用于IO密集型任务，如异步阻塞IO操作，这个调度器的线程池会根据需要增长；对于普通的计算任务，请使用Schedulers.computation()；
+     * Schedulers.io( )默认是一个CachedThreadScheduler，很像一个有线程缓存的新线程调度器
+     *
      */
     public static Scheduler io() {
         return INSTANCE.ioScheduler;
@@ -137,6 +154,8 @@ public final class Schedulers {
      * @param executor
      *          the executor to wrap
      * @return the new Scheduler wrapping the Executor
+     *
+     * 使用指定的Executor作为调度器
      */
     public static Scheduler from(Executor executor) {
         return new ExecutorScheduler(executor);

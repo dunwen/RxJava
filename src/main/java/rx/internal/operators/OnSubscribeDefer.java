@@ -23,8 +23,12 @@ import rx.functions.Func0;
 import rx.observers.Subscribers;
 
 /**
+ * 当订阅发生的时候才创建observable，或者说，为每个订阅关系创建一个新的observable
+ *
  * Do not create the Observable until an Observer subscribes; create a fresh Observable on each
  * subscription.
+ *
+ *
  * <p>
  * <img width="640" src="https://github.com/ReactiveX/RxJava/wiki/images/rx-operators/defer.png" alt="">
  * <p>
@@ -43,6 +47,7 @@ public final class OnSubscribeDefer<T> implements OnSubscribe<T> {
     public void call(final Subscriber<? super T> s) {
         Observable<? extends T> o;
         try {
+            //此处可以看见当发生订阅的时候（调阅订阅关系的时候）才开始创建
             o = observableFactory.call();
         } catch (Throwable t) {
             Exceptions.throwOrReport(t, s);

@@ -26,6 +26,7 @@ import rx.Subscription;
 import rx.exceptions.*;
 
 /**
+ * 持有了一组订阅，以便把这些订阅一起取消订阅关系
  * Subscription that represents a group of Subscriptions that are unsubscribed together.
  * <p>
  * All methods of this class are thread-safe.

@@ -19,6 +19,11 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
+ * 插件让你可以用多种方式修改RxJava的默认行为：
+ *  修改默认的计算、IO和新线程调度器集合
+ * 为RxJava可能遇到的特殊错误注册一个错误处理器
+ * 注册一个函数记录一些常规RxJava活动的发生
+ *
  * Registry for plugin implementations that allows global override and handles the retrieval of correct
  * implementation based on order of precedence:
  * <ol>

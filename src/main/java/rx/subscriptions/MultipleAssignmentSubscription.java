@@ -23,6 +23,9 @@ import rx.Subscription;
 /**
  * Subscription that can be checked for status such as in a loop inside an {@link Observable} to exit the loop
  * if unsubscribed.
+ *
+ * 多冲任务订阅。
+ *
  */
 public final class MultipleAssignmentSubscription implements Subscription {
 

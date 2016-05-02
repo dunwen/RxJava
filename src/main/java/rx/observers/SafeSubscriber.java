@@ -27,6 +27,15 @@ import rx.exceptions.UnsubscribeFailedException;
 import rx.internal.util.RxJavaPluginUtils;
 
 /**
+ *
+ * 此包装执行以下操作：
+
+ *只允许任何单次执行的onError或onCompleted。
+ *确保一旦onCompleted或onError的执行，没有进一步的其它步骤可以被执行
+ *如果退订被调用时，observeable会尽最大的努力停止事件的向下传递（交付），但是onXXX系列方法还仍然有可能会被继续调用。
+ *当onError的或onCompleted发生时，取消订阅（如果异步执行）。
+ *SafeSubscriber不会同步onNext执行。使用SerializedSubscriber做到这一点。
+ *
  * {@code SafeSubscriber} is a wrapper around {@code Subscriber} that ensures that the {@code Subscriber}
  * complies with <a href="http://reactivex.io/documentation/contract.html">the Observable contract</a>.
  * <p>

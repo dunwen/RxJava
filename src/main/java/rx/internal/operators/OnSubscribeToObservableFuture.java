@@ -25,6 +25,8 @@ import rx.functions.Action0;
 import rx.subscriptions.Subscriptions;
 
 /**
+ * 实际上是在call方法中调用future的get()方法，其中包含对超时的处理
+ *
  * Converts a {@code Future} into an {@code Observable}.
  * <p>
  * <img width="640" src="https://github.com/ReactiveX/RxJava/wiki/images/rx-operators/from.Future.png" alt="">
@@ -59,6 +61,7 @@ public final class OnSubscribeToObservableFuture {
 
         @Override
         public void call(Subscriber<? super T> subscriber) {
+            //在最终解除订阅的时候，会调用future的cancel方法。
             subscriber.add(Subscriptions.create(new Action0() {
                 @Override
                 public void call() {

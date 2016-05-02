@@ -28,6 +28,7 @@ import rx.subscriptions.Subscriptions;
 
 /**
  * The Observable class that implements the Reactive Pattern.
+ * 这个类实现了响应式模式
  * <p>
  * This class provides methods for subscribing to the Observable as well as delegate methods to the various
  * Observers.
@@ -41,6 +42,7 @@ import rx.subscriptions.Subscriptions;
  * 
  * @param <T>
  *            the type of the items emitted by the Observable
+ *            泛型T，就是被订阅者发送的订阅消息类型
  */
 public class Observable<T> {
 
@@ -62,6 +64,11 @@ public class Observable<T> {
     static final RxJavaObservableExecutionHook hook = RxJavaPlugins.getInstance().getObservableExecutionHook();
 
     /**
+     *
+     * 使用creat方法创建的被观察者，会在订阅的时候执行OnSubscribe的onCall方法，所以你需要在OnSubscribe的onCall方法
+     * 里面适当的调用观察者的onNext，onComplete，onError方法，这些方法都需要自己去实现。
+     * 还有，一个表现良好的被观察这应该要么只调用观察者的onCompleted要么onError方法一次。
+     *
      * Returns an Observable that will execute the specified function when a {@link Subscriber} subscribes to
      * it.
      * <p>
@@ -91,6 +98,7 @@ public class Observable<T> {
      * @see <a href="http://reactivex.io/documentation/operators/create.html">ReactiveX operators documentation: Create</a>
      */
     public static <T> Observable<T> create(OnSubscribe<T> f) {
+        //这里调用了插件的日志管理功能，表示在onCreate的时候记录一次日志，这个插件RxJavaPlugins.class提供了方法给开发者去hook
         return new Observable<T>(hook.onCreate(f));
     }
 
@@ -167,6 +175,7 @@ public class Observable<T> {
 
     /**
      * Invoked when Observable.subscribe is called.
+     * 当Observable.subscribe调用的时候执行它的call方法。
      */
     public interface OnSubscribe<T> extends Action1<Subscriber<? super T>> {
         // cover for generics insanity
@@ -1214,6 +1223,8 @@ public class Observable<T> {
     }
 
     /**
+     * 在订阅关系发生的时候，才创建Observable，这样做有什么好处呢，这样做可以让外围(全局)的数据永远保持最新的，，
+     *
      * Returns an Observable that calls an Observable factory to create an Observable for each new Observer
      * that subscribes. That is, for each subscriber, the actual Observable that subscriber observes is
      * determined by the factory function.
@@ -1242,6 +1253,8 @@ public class Observable<T> {
     }
 
     /**
+     * 创建一个不发射任何数据但是正常终止的Observable,多半用于测试
+     *
      * Returns an Observable that emits no items to the {@link Observer} and immediately invokes its
      * {@link Observer#onCompleted onCompleted} method.
      * <p>
@@ -1284,6 +1297,9 @@ public class Observable<T> {
     }
 
     /**
+     *
+     * 对于from方法传入的future，它会返回future的get方法返回的值形成的observable，还有另外一个版本的是可以设置最大的等待时长
+     *
      * Converts a {@link Future} into an Observable.
      * <p>
      * <img width="640" height="315" src="https://raw.github.com/wiki/ReactiveX/RxJava/images/rx-operators/from.Future.png" alt="">
@@ -1311,6 +1327,9 @@ public class Observable<T> {
     }
 
     /**
+     * 对于Future，它会发射Future.get()方法返回的单个数据。from方法有一个可接受两个可选参数的版本，分别指定超时时长和时间单位。
+     * 如果过了指定的时长Future还没有返回一个值，这个Observable会发射错误通知并终止
+     *
      * Converts a {@link Future} into an Observable, with a timeout on the Future.
      * <p>
      * <img width="640" height="315" src="https://raw.github.com/wiki/ReactiveX/RxJava/images/rx-operators/from.Future.png" alt="">
@@ -1342,6 +1361,9 @@ public class Observable<T> {
     }
 
     /**
+     * 对于Future，它会发射Future.get()方法返回的单个数据,这个指定了等待future.get()方法所在的调度器，因为get方法可能会阻塞线程
+     *
+     *
      * Converts a {@link Future}, operating on a specified {@link Scheduler}, into an Observable.
      * <p>
      * <img width="640" height="315" src="https://raw.github.com/wiki/ReactiveX/RxJava/images/rx-operators/from.Future.s.png" alt="">
@@ -1393,6 +1415,9 @@ public class Observable<T> {
     }
 
     /**
+     * from传入的数组操作符，大家都懂
+     * 在这里，将会使用backpressure模式，即subscriber主动从observable那里拉取数据，而不是observable往subscriber推数据
+     *
      * Converts an Array into an Observable that emits the items in the Array.
      * <p>
      * <img width="640" height="315" src="https://raw.github.com/wiki/ReactiveX/RxJava/images/rx-operators/from.png" alt="">
@@ -1414,6 +1439,7 @@ public class Observable<T> {
             return empty();
         } else
         if (n == 1) {
+            //当数组长度为1的时候直接调用just即可
             return just(array[0]);
         }
         return create(new OnSubscribeFromArray<T>(array));
@@ -1490,6 +1516,8 @@ public class Observable<T> {
     }
 
     /**
+     * 在指定延时后发送一个在规定时间内逐渐增大的整数，这个功能类似timer，是从0开始发射的，以后逐次增加1
+     *
      * Returns an Observable that emits a {@code 0L} after the {@code initialDelay} and ever increasing numbers
      * after each {@code period} of time thereafter.
      * <p>
@@ -1548,6 +1576,9 @@ public class Observable<T> {
     }
 
     /**
+     * Just类似于From，但是From会将数组或Iterable的素具取出然后逐个发射，而Just只是简单的原样发射，将数组或Iterable当做单个数据。
+     * Just还支持多个参数的版本
+     *
      * Returns an Observable that emits a single item and then completes.
      * <p>
      * <img width="640" height="310" src="https://raw.github.com/wiki/ReactiveX/RxJava/images/rx-operators/just.png" alt="">
@@ -2701,6 +2732,8 @@ public class Observable<T> {
     }
 
     /**
+     * 创建一个不发射数据也不终止的Observable,多半用于测试
+     *
      * Returns an Observable that never sends any items or notifications to an {@link Observer}.
      * <p>
      * <img width="640" height="185" src="https://raw.github.com/wiki/ReactiveX/RxJava/images/rx-operators/never.png" alt="">
@@ -2721,6 +2754,9 @@ public class Observable<T> {
     }
 
     /**
+     *
+     * 创建一个发射特定整数序列的Observable,range默认不在任何调度器上面执行
+     *
      * Returns an Observable that emits a sequence of Integers within a specified range.
      * <p>
      * <img width="640" height="195" src="https://raw.github.com/wiki/ReactiveX/RxJava/images/rx-operators/range.png" alt="">
@@ -3501,6 +3537,14 @@ public class Observable<T> {
     }
 
     /**
+
+     *
+     * 当它订阅原来的Observable时，buffer(bufferClosingSelector)开始将数据收集到一个List，
+     * 然后它调用bufferClosingSelector生成第二个Observable，当第二个Observable发射一个TClosing时，
+     * buffer发射当前的List，然后重复这个过程：开始组装一个新的List，
+     * 然后调用bufferClosingSelector创建一个新的Observable并监视它。
+     * 它会一直这样做直到原来的Observable执行完成
+     *
      * Returns an Observable that emits buffers of items it collects from the source Observable. The resulting
      * Observable emits connected, non-overlapping buffers. It emits the current buffer and replaces it with a
      * new buffer whenever the Observable produced by the specified {@code bufferClosingSelector} emits an item.
@@ -3527,6 +3571,9 @@ public class Observable<T> {
     }
 
     /**
+     * buffer(count)以列表(List)的形式发射非重叠的缓存，
+     * 每一个缓存至多包含来自原始Observable的count项数据（最后发射的列表数据可能少于count项）
+     *
      * Returns an Observable that emits buffers of items it collects from the source Observable. The resulting
      * Observable emits connected, non-overlapping buffers, each containing {@code count} items. When the source
      * Observable completes or encounters an error, the resulting Observable emits the current buffer and
@@ -3549,6 +3596,11 @@ public class Observable<T> {
     }
 
     /**
+     * buffer(count, skip)从原始Observable的第一项数据开始创建新的缓存，此后每当收到skip项数据，用count项数据填充缓存：
+     * 开头的一项和后续的count-1项，它以列表(List)的形式发射缓存
+     * 取决于count和skip的值，这些缓存可能会有重叠部分（比如skip < count时），也可能会有间隙（比如skip > count时）
+     *
+     *
      * Returns an Observable that emits buffers of items it collects from the source Observable. The resulting
      * Observable emits buffers every {@code skip} items, each containing {@code count} items. When the source
      * Observable completes or encounters an error, the resulting Observable emits the current buffer and
@@ -3562,10 +3614,12 @@ public class Observable<T> {
      * 
      * @param count
      *            the maximum size of each buffer before it should be emitted
+     *            最大缓存item个数
      * @param skip
      *            how many items emitted by the source Observable should be skipped before starting a new
      *            buffer. Note that when {@code skip} and {@code count} are equal, this is the same operation as
      *            {@link #buffer(int)}.
+     *
      * @return an Observable that emits buffers for every {@code skip} item from the source Observable and
      *         containing at most {@code count} items
      * @see <a href="http://reactivex.io/documentation/operators/buffer.html">ReactiveX operators documentation: Buffer</a>
@@ -3575,6 +3629,13 @@ public class Observable<T> {
     }
 
     /**
+     *
+     * buffer(timespan, timeshift, unit)在每一个timeshift时期内都创建一个新的List,
+     * 然后用原始Observable发射的每一项数据填充这个列表（在把这个List当做自己的数据发射前，
+     * 从创建时开始，直到过了timespan这么长的时间）。
+     * 如果timespan长于timeshift，它发射的数据包将会重叠，因此可能包含重复的数据项。
+     *
+     *
      * Returns an Observable that emits buffers of items it collects from the source Observable. The resulting
      * Observable starts a new buffer periodically, as determined by the {@code timeshift} argument. It emits
      * each buffer after a fixed timespan, specified by the {@code timespan} argument. When the source
@@ -3637,6 +3698,12 @@ public class Observable<T> {
     }
 
     /**
+     *
+     * buffer(timespan, unit)定期以List的形式发射新的数据，每个时间段，
+     * 收集来自原始Observable的数据（从前面一个数据包裹之后，或者如果是第一个数据包裹，
+     * 从有观察者订阅原来的Observale之后开始）。还有另一个版本的buffer接受一个Scheduler参数，
+     * 默认情况下会使用computation调度器
+     *
      * Returns an Observable that emits buffers of items it collects from the source Observable. The resulting
      * Observable emits connected, non-overlapping buffers, each of a fixed duration specified by the
      * {@code timespan} argument. When the source Observable completes or encounters an error, the resulting
@@ -3665,6 +3732,12 @@ public class Observable<T> {
     }
 
     /**
+     *
+     * 每当收到来自原始Observable的count项数据，或者每过了一段指定的时间后，
+     * buffer(timespan, unit, count)就以List的形式发射这期间的数据，即使数据项少于count项。
+     * 还有另一个版本的buffer接受一个Scheduler参数，默认情况下会使用computation调度器。
+     *
+     *
      * Returns an Observable that emits buffers of items it collects from the source Observable. The resulting
      * Observable emits connected, non-overlapping buffers, each of a fixed duration specified by the
      * {@code timespan} argument or a maximum size specified by the {@code count} argument (whichever is reached
@@ -3763,6 +3836,12 @@ public class Observable<T> {
     }
 
     /**
+     *buffer(bufferOpenings, bufferClosingSelector)监视这个叫bufferOpenings的Observable
+     * （它发射BufferOpening对象），每当bufferOpenings发射了一个数据时，它就创建一个新的List开始手机原始Observable的数据，
+     * 并将bufferOpenings传递给closingSelector函数。这个函数返回一个Observable。buffer监视这个Observable，
+     * 当它检测到一个来自这个Observable的数据时，就关闭List并且发射它自己的数据（之前的那个List）。
+
+     *
      * Returns an Observable that emits buffers of items it collects from the source Observable. The resulting
      * Observable emits buffers that it creates when the specified {@code bufferOpenings} Observable emits an
      * item, and closes when the Observable returned from {@code bufferClosingSelector} emits an item.
@@ -3790,6 +3869,10 @@ public class Observable<T> {
     }
 
     /**
+     * buffer(boundary)监视一个名叫boundary的Observable，
+     * 每当这个Observable发射了一个值，
+     * 它就创建一个新的List开始收集来自原始Observable的数据并发射原来的List。
+     *
      * Returns an Observable that emits non-overlapping buffered items from the source Observable each time the
      * specified boundary Observable emits an item.
      * <p>
@@ -4147,6 +4230,8 @@ public class Observable<T> {
     }
 
     /**
+     * 如果两个事件在相同规定的特定时间间隔内发生的话，那么只发送这一串事件的最后一个被观测到的对象
+     *
      * Returns an Observable that mirrors the source Observable, except that it drops items emitted by the
      * source Observable that are followed by another item within a computed debounce duration.
      * <p>
@@ -6320,6 +6405,10 @@ public class Observable<T> {
     }
 
     /**
+     * 当observer处理事件的速度比observable发送事件的速度慢的时候，命令observable无限期的缓存发送出来的事件，
+     * 知道收到信息说可以再发送下一个事件了，通常都是使用request(n)方法请求下几个数据什么的。
+     * javadoc还说，允许设置这玩意缓存的数量，但是缓存的数量一旦超出规定的值就会报错？
+     *
      * Instructs an Observable that is emitting items faster than its observer can consume them to buffer these
      * items indefinitely until they can be emitted.
      * <p>
@@ -6438,6 +6527,10 @@ public class Observable<T> {
     }
 
     /**
+     *
+     * 当observable发送的消息的速度比subscriber消耗事件的速度快的时候，命令observable丢弃后来的事件，直到subscriber
+     * 再次调用request（n）方法的时候，就发送给它的subscriber调用时间以后的n个事件。
+     *
      * Instructs an Observable that is emitting items faster than its observer can consume them to discard,
      * rather than emit, those items that its observer is not prepared to observe.
      * <p>
@@ -6726,6 +6819,8 @@ public class Observable<T> {
     }
     
     /**
+     * 创建一个发射特定数据重复多次的Observable
+     *
      * Returns an Observable that repeats the sequence of items emitted by the source Observable indefinitely.
      * <p>
      * <img width="640" height="309" src="https://raw.github.com/wiki/ReactiveX/RxJava/images/rx-operators/repeat.o.png" alt="">
@@ -6761,6 +6856,7 @@ public class Observable<T> {
     }
 
     /**
+     * 创建一个发射特定数据重复多次的Observable,这个可以指定重复的次数
      * Returns an Observable that repeats the sequence of items emitted by the source Observable at most
      * {@code count} times.
      * <p>
@@ -7515,6 +7611,8 @@ public class Observable<T> {
     }
 
     /**
+     * 定期发射Observable一段时间内的最后发射的数据项，默认执行在computation调度器
+     *
      * Returns an Observable that emits the most recently emitted item (if any) emitted by the source Observable
      * within periodic time intervals.
      * <p>
@@ -8293,6 +8391,7 @@ public class Observable<T> {
 
     /**
      * Subscribes to an Observable and provides a callback to handle the items it emits.
+     * 提供只响应onNext方法的订阅，当onNext方法发生异常时，调用默认的onError方法
      * <dl>
      *  <dt><b>Scheduler:</b></dt>
      *  <dd>{@code subscribe} does not operate by default on a particular {@link Scheduler}.</dd>
@@ -8321,6 +8420,9 @@ public class Observable<T> {
     /**
      * Subscribes to an Observable and provides callbacks to handle the items it emits and any error
      * notification it issues.
+     *
+     * 只响应onNext和onError的订阅。
+     *
      * <dl>
      *  <dt><b>Scheduler:</b></dt>
      *  <dd>{@code subscribe} does not operate by default on a particular {@link Scheduler}.</dd>
@@ -8353,6 +8455,9 @@ public class Observable<T> {
     /**
      * Subscribes to an Observable and provides callbacks to handle the items it emits and any error or
      * completion notification it issues.
+     *
+     * 根据传入的3个回调方法构造订阅者，并在适当的时候回调它们。
+     *
      * <dl>
      *  <dt><b>Scheduler:</b></dt>
      *  <dd>{@code subscribe} does not operate by default on a particular {@link Scheduler}.</dd>
@@ -8507,13 +8612,16 @@ public class Observable<T> {
              * so I won't mention that in the exception
              */
         }
-        
+
+        //从这里看出，onStart调用的时机是订阅关系刚刚发生前。
         // new Subscriber so onStart it
         subscriber.onStart();
         
         /*
          * See https://github.com/ReactiveX/RxJava/issues/216 for discussion on "Guideline 6.4: Protect calls
          * to user code from within an Observer"
+         * SafeSubscriber 是subscriber的一个包装类，这个类确保用户实现的subscriber遵守observeable的规范
+         * 详细了解请跟入这个类
          */
         // if not already wrapped
         if (!(subscriber instanceof SafeSubscriber)) {
@@ -8525,6 +8633,7 @@ public class Observable<T> {
         // add a significant depth to already huge call stacks.
         try {
             // allow the hook to intercept and/or decorate
+            //提供hook去中断或者装饰这个订阅
             hook.onSubscribeStart(observable, observable.onSubscribe).call(subscriber);
             return hook.onSubscribeReturn(subscriber);
         } catch (Throwable e) {
@@ -9022,6 +9131,8 @@ public class Observable<T> {
     }
     
     /**
+     *这个玩意跟sample和throtteLast类似，但是不是发送一段时间内的最后一个被采集的item，而是这段时间内的下一个第一个被观测到的item
+     *
      * Returns an Observable that emits only the first item emitted by the source Observable during sequential
      * time windows of a specified duration.
      * <p>
@@ -9079,6 +9190,8 @@ public class Observable<T> {
     }
 
     /**
+     * 跟sample一样，都是采集一段时间内的最后一个item然后发送之，这个操作默认发生在computation调度器，但是可以更换
+     *
      * Returns an Observable that emits only the last item emitted by the source Observable during sequential
      * time windows of a specified duration.
      * <p>
@@ -9140,6 +9253,9 @@ public class Observable<T> {
     }
 
     /**
+     *
+     * 如果两个事件在相同规定的特定时间间隔内发生的话，那么只发送这一串事件的最后一个被观测到的对象
+     *
      * Returns an Observable that only emits those items emitted by the source Observable that are not followed
      * by another emitted item within a specified time window.
      * <p>
@@ -9178,6 +9294,8 @@ public class Observable<T> {
     }
 
     /**
+     * 创建一个不发射数据以一个错误终止的Observable
+     *
      * Returns an Observable that only emits those items emitted by the source Observable that are not followed
      * by another emitted item within a specified time window, where the time window is governed by a specified
      * Scheduler.
@@ -9888,6 +10006,8 @@ public class Observable<T> {
     }
     
     /**
+     *
+     * Window和Buffer类似，但不是发射来自原始Observable的数据包，它发射的是Observables，这些Observables中的每一个都发射原始Observable数据的一个子集，最后发射一个onCompleted通知。
      * Returns an Observable that emits windows of items it collects from the source Observable. The resulting
      * Observable emits connected, non-overlapping windows. It emits the current window and opens a new one
      * whenever the Observable produced by the specified {@code closingSelector} emits an item.
@@ -9900,7 +10020,7 @@ public class Observable<T> {
      *  <dt><b>Scheduler:</b></dt>
      *  <dd>This version of {@code window} does not operate by default on a particular {@link Scheduler}.</dd>
      * </dl>
-     * 
+     *
      * @param closingSelector
      *            a {@link Func0} that returns an {@code Observable} that governs the boundary between windows.
      *            When this {@code Observable} emits an item, {@code window} emits the current window and begins

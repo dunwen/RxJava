@@ -30,6 +30,8 @@ package rx;
 public interface Observer<T> {
 
     /**
+     * 通知观察者消息已经发送完成了
+     *
      * Notifies the Observer that the {@link Observable} has finished sending push-based notifications.
      * <p>
      * The {@link Observable} will not call this method if it calls {@link #onError}.
@@ -37,6 +39,8 @@ public interface Observer<T> {
     void onCompleted();
 
     /**
+     * 发生异常的处理，一旦这个方法被调用，在其后将不会调用onCompleted和onNext方法。
+     *
      * Notifies the Observer that the {@link Observable} has experienced an error condition.
      * <p>
      * If the {@link Observable} calls this method, it will not thereafter call {@link #onNext} or
@@ -48,6 +52,8 @@ public interface Observer<T> {
     void onError(Throwable e);
 
     /**
+     *
+     *
      * Provides the Observer with a new item to observe.
      * <p>
      * The {@link Observable} may call this method 0 or more times.

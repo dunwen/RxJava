@@ -25,6 +25,8 @@ import rx.plugins.RxJavaPlugins;
 import rx.subscriptions.*;
 
 /**
+ * 在这个里面依赖了一个executor实例，建立了调度器和executor的使用关系
+ *
  * Scheduler that wraps an Executor instance and establishes the Scheduler contract upon it.
  * <p>
  * Note that thread-hopping is unavoidable with this kind of Scheduler as we don't know about the underlying

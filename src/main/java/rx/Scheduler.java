@@ -62,6 +62,10 @@ public abstract class Scheduler {
      * Work on a {@link Scheduler.Worker} is guaranteed to be sequential.
      * 
      * @return a Worker representing a serial queue of actions to be executed
+     *
+     *
+     * 可以单独使用这个方法获得一个调度器调度一个work，类似快速创建一个线程、或者线程池
+     * 但是，在worker使用完后，务必使用unsubscribe方法取消订阅，因为worker类实现了Subscription类
      */
     public abstract Worker createWorker();
 
@@ -74,7 +78,9 @@ public abstract class Scheduler {
 
         /**
          * Schedules an Action for execution.
-         * 
+         *
+         * 这个回调相当于thread里面的runnable
+         *
          * @param action
          *            Action to schedule
          * @return a subscription to be able to unsubscribe the action (unschedule it if not executed)
@@ -82,6 +88,8 @@ public abstract class Scheduler {
         public abstract Subscription schedule(Action0 action);
 
         /**
+         * 可以在延时时间后执行某个任务。
+         *
          * Schedules an Action for execution at some point in the future.
          * <p>
          * Note to implementors: non-positive {@code delayTime} should be regarded as undelayed schedule, i.e.,
@@ -99,24 +107,36 @@ public abstract class Scheduler {
         public abstract Subscription schedule(final Action0 action, final long delayTime, final TimeUnit unit);
 
         /**
+         *
+         * 使用另一个版本的schedule，schedulePeriodically(action,initialDelay,period,timeUnit)方法让你可以安排一个定期执行的任务
+         *
          * Schedules a cancelable action to be executed periodically. This default implementation schedules
          * recursively and waits for actions to complete (instead of potentially executing long-running actions
          * concurrently). Each scheduler that can do periodic scheduling in a better way should override this.
          * <p>
          * Note to implementors: non-positive {@code initialTime} and {@code period} should be regarded as
          * undelayed scheduling of the first and any subsequent executions.
+         *
+         *
          * 
          * @param action
          *            the Action to execute periodically
          * @param initialDelay
          *            time to wait before executing the action for the first time; non-positive values indicate
          *            an undelayed schedule
+         *            第一次执行的延时时间
          * @param period
          *            the time interval to wait each time in between executing the action; non-positive values
          *            indicate no delay between repeated schedules
+         *            重复执行的周期
          * @param unit
          *            the time unit of {@code period}
+         *            时间单位。
          * @return a subscription to be able to unsubscribe the action (unschedule it if not executed)
+         *
+         * 使用另一个版本的schedule，schedulePeriodically(action,initialDelay,period,timeUnit)方法让你可以安排一个定期执行的任务
+         *
+         *
          */
         public Subscription schedulePeriodically(final Action0 action, long initialDelay, long period, TimeUnit unit) {
             final long periodInNanos = unit.toNanos(period);
@@ -163,6 +183,8 @@ public abstract class Scheduler {
         }
 
         /**
+         *
+         * 获取系统的当前时间
          * Gets the current time, in milliseconds, according to this Scheduler.
          *
          * @return the scheduler's notion of current absolute time in milliseconds
@@ -173,6 +195,8 @@ public abstract class Scheduler {
     }
 
     /**
+     *获取系统的当前时间
+     *
      * Gets the current time, in milliseconds, according to this Scheduler.
      *
      * @return the scheduler's notion of current absolute time in milliseconds

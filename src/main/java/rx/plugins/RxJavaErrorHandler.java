@@ -20,6 +20,8 @@ import rx.annotations.Beta;
 import rx.exceptions.Exceptions;
 
 /**
+ * 这个插件让你可以注册一个函数处理传递给 Subscriber.onError(Throwable) 的错误。
+ *
  * Abstract class for defining error handling logic in addition to the normal
  * {@link Subscriber#onError(Throwable)} behavior.
  * <p>
@@ -35,6 +37,8 @@ public abstract class RxJavaErrorHandler {
 
     /**
      * Receives all {@code Exception}s from an {@link Observable} passed to
+     * 接受所有从Observable传递过来的错误，
+     *
      * {@link Subscriber#onError(Throwable)}.
      * <p>
      * This should <em>never</em> throw an {@code Exception}. Make sure to try/catch({@code Throwable}) all code
@@ -50,9 +54,13 @@ public abstract class RxJavaErrorHandler {
     protected static final String ERROR_IN_RENDERING_SUFFIX = ".errorRendering";
 
     /**
+     * 从OnErrorThrowable.OnNextValue接受item并提供一个选择一个字符串代表这个错误的机会。意思就是把错误（error）转换成字符串标识这个错误咯
+
      * Receives items causing {@code OnErrorThrowable.OnNextValue} and gives a chance to choose the String
      * representation of the item in the {@code OnNextValue} stacktrace rendering. Returns {@code null} if this
      * type of item is not managed and should use default rendering.
+     *
+     *
      * <p>
      * Note that primitive types are always rendered as their {@code toString()} value.
      * <p>
@@ -63,7 +71,7 @@ public abstract class RxJavaErrorHandler {
      *             {@code OnErrorThrowable.OnNextValue}
      * @return a short {@link String} representation of the item if one is known for its type, or null for
      *         default
-     * @since (if this graduates from Experimental/Beta to supported, replace this parenthetical with the
+     * @since (if this graduates from Experimental Beta to supported, replace this parenthetical with the
      *        release number)
      */
     @Beta
@@ -81,6 +89,7 @@ public abstract class RxJavaErrorHandler {
 
     /**
      * Override this method to provide rendering for specific types other than primitive types and null.
+     * 重写这个方法提供对原始类型的错误的转换，，，
      * <p>
      * For performance and overhead reasons, this should should limit to a safe production of a short
      * {@code String} (as large renderings will bloat up the stacktrace). Prefer to try/catch({@code Throwable})
@@ -93,6 +102,8 @@ public abstract class RxJavaErrorHandler {
      *             {@code OnErrorThrowable.OnNextValue}
      * @return a short {@link String} representation of the item if one is known for its type, or null for
      *         default
+     *         返回一个字符串代表它的错误类型，默认是返回null
+     *
      * @throws InterruptedException if the rendering thread is interrupted
      * @since (if this graduates from Experimental/Beta to supported, replace this parenthetical with the
      *        release number)

@@ -40,6 +40,7 @@ public final class OnSubscribeTimerPeriodically implements OnSubscribe<Long> {
         this.scheduler = scheduler;
     }
 
+    //这个实现方法也很简单，就是使用了worker的schedulePeriodically方法。不过请注意，这个默认是从computation上执行
     @Override
     public void call(final Subscriber<? super Long> child) {
         final Worker worker = scheduler.createWorker();

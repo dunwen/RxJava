@@ -29,6 +29,11 @@ public final class OnSubscribeFromArray<T> implements OnSubscribe<T> {
     
     @Override
     public void call(Subscriber<? super T> child) {
+        //调用的是subscriber的方法，即通知订阅者可以从observable那里拉取数据，其拉取的流量可以使用subscriber的request方法控制
+        //假如这个observable与subscriber处于相同的线程，无论request方法一次请求多大的数据，也无论subscriber处理速度如何，
+        //这个线程都会阻塞，因此当他们处于相同的线程的时候，其实是并不会发生backpressure这种需求的情况。然而，当他们处于不同的进程
+        //的时候，rxjava会因为subscriber处理的速度跟不上observable发送的速度，而使rxJava一直缓存者observable发送出来的
+        //数据，造成raJava使用的内存不断的增长，这时候，应当使用request方法可以控制流量
         child.setProducer(new FromArrayProducer<T>(child, array));
     }
     
@@ -81,17 +86,20 @@ public final class OnSubscribeFromArray<T> implements OnSubscribe<T> {
             }
             child.onCompleted();
         }
-        
+
+
         void slowPath(long r) {
             final Subscriber<? super T> child = this.child;
             final T[] array = this.array;
             final int n = array.length;
             
             long e = 0L;
+            //取出当前遍历到的数组下标index
             int i = index;
 
             for (;;) {
-                
+
+                //往subscriber发送长度为r的数据。
                 while (r != 0L && i != n) {
                     if (child.isUnsubscribed()) {
                         return;
@@ -113,7 +121,8 @@ public final class OnSubscribeFromArray<T> implements OnSubscribe<T> {
                 }
                 
                 r = get() + e;
-                
+
+                //更新下标index
                 if (r == 0L) {
                     index = i;
                     r = addAndGet(e);

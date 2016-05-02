@@ -25,6 +25,12 @@ import rx.internal.schedulers.NewThreadScheduler;
 import rx.schedulers.Schedulers;
 
 /**
+ * 这个插件让你可以使用你选择的调度器覆盖默认的计算、IO和新线程调度 (Scheduler)
+ * 这个插件提供两个途径去订做调度器的功能
+ * 1.假若你想重新定义全部的调度器，那么重写return Scheduler (io(), computation(), newThread()这3个方法
+ * 2.你可以在action0传入来的时候装饰（重定义）传入来的action的行为，系统提供的调度器都使用这个hook，所以
+ * 这是一个很方便的途径去修改调度器的行为而不用批量的修改调度器。（说白了，就是重写onSchedule()修饰一下传入的action）
+ *
  * This plugin class provides 2 ways to customize {@link Scheduler} functionality
  * 1.  You may redefine entire schedulers, if you so choose.  To do so, override
  * the 3 methods that return Scheduler (io(), computation(), newThread()).
@@ -99,6 +105,7 @@ public class RxJavaSchedulersHook {
     }
 
     /**
+     * 在真正的action传递到调度器之前调用这个方法，可以用作包裹，代理，修饰，打印log等待，默认的只是返回它本身
      * Invoked before the Action is handed over to the scheduler.  Can be used for wrapping/decorating/logging.
      * The default is just a pass through.
      * @param action action to schedule

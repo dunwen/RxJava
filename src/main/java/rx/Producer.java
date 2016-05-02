@@ -16,6 +16,9 @@
 package rx;
 
 /**
+ * 建立在observer与observable之间的请求信道，这个接口允许subscriber从observable那里请求确定数量的item
+ * 请求量仅会影响onNext方法
+ *
  * Interface that establishes a request-channel between an Observable and a Subscriber and allows
  * the Subscriber to request a certain amount of items from the Observable (otherwise known as
  * backpressure).

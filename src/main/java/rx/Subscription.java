@@ -19,6 +19,9 @@ import rx.subscriptions.Subscriptions;
 
 /**
  * Subscription returns from {@link Observable#subscribe(Subscriber)} to allow unsubscribing.
+ *
+ * 这个接口用于从Observable#subscribe(Subscriber)返回的时候取消订阅
+ *
  * <p>
  * See the utilities in {@link Subscriptions} and the implementations in the {@code rx.subscriptions} package.
  * <p>

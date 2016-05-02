@@ -18,6 +18,9 @@ package rx;
 import rx.internal.util.SubscriptionList;
 
 /**
+ *
+ * Observer接口的实现类，在rxJava订阅中，Observer总是转换成了subscriber后才使用的
+ *
  * Provides a mechanism for receiving push-based notifications from Observables, and permits manual
  * unsubscribing from these Observables.
  * <p>
@@ -109,6 +112,10 @@ public abstract class Subscriber<T> implements Observer<T>, Subscription {
     }
 
     /**
+     *
+     * 这个方法是subscriber相比observer新增的方法，这个方法在刚发生订阅时候什么都没有做的时候执行，这个方法执行在
+     * 发生订阅所在的线程，可以用于一些初始化参数。默认什么都不做
+     *
      * This method is invoked when the Subscriber and Observable have been connected but the Observable has
      * not yet begun to emit items or send notifications to the Subscriber. Override this method to add any
      * useful initialization to your subscription, for instance to initiate backpressure.
@@ -118,6 +125,8 @@ public abstract class Subscriber<T> implements Observer<T>, Subscription {
     }
     
     /**
+     * 从observable那里请求一个确定数量的item，这是请求backpressure的一个方法
+     *
      * Request a certain maximum number of emitted items from the Observable this Subscriber is subscribed to.
      * This is a way of requesting backpressure. To disable backpressure, pass {@code Long.MAX_VALUE} to this
      * method.
@@ -134,6 +143,8 @@ public abstract class Subscriber<T> implements Observer<T>, Subscription {
      * 
      * @param n the maximum number of items you want the Observable to emit to the Subscriber at this time, or
      *           {@code Long.MAX_VALUE} if you want the Observable to emit items at its own pace
+     *
+     *
      * @throws IllegalArgumentException
      *             if {@code n} is negative
      */
@@ -172,6 +183,9 @@ public abstract class Subscriber<T> implements Observer<T>, Subscription {
     }
     
     /**
+     *
+     * 设置生产者，在生产者中，值requested决定生产者每次生产的数量。在生产者中调用了本实例的call方法。
+     *
      * If other subscriber is set (by calling constructor
      * {@link #Subscriber(Subscriber)} or
      * {@link #Subscriber(Subscriber, boolean)}) then this method calls

@@ -22,6 +22,8 @@ import rx.exceptions.Exceptions;
 
 /**
  * Subscription that represents a group of Subscriptions that are unsubscribed together.
+ *
+ * 代表一系列的subscriptions，以便一起将它们解除绑定
  * 
  * @see <a href="http://msdn.microsoft.com/en-us/library/system.reactive.disposables.compositedisposable(v=vs.103).aspx">Rx.Net equivalent CompositeDisposable</a>
  */

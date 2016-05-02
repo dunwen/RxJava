@@ -24,6 +24,8 @@ import rx.subscriptions.BooleanSubscription;
 import rx.subscriptions.Subscriptions;
 
 /**
+ *
+ * 在当前线程立刻执行任务。
  * Executes work immediately on the current thread.
  */
 public final class ImmediateScheduler extends Scheduler {

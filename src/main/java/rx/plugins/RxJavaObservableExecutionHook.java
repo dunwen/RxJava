@@ -23,6 +23,8 @@ import rx.Subscription;
 import rx.functions.Func1;
 
 /**
+ * 这个插件让你可以注册一个函数用于记录日志或者性能数据收集，RxJava在某些常规活动时会调用它。
+ *
  * Abstract ExecutionHook with invocations at different lifecycle points of {@link Observable} execution with a
  * default no-op implementation.
  * <p>
@@ -41,6 +43,8 @@ import rx.functions.Func1;
  */
 public abstract class RxJavaObservableExecutionHook {
     /**
+     * 在 Observable.create( )方法中调用。
+     *
      * Invoked during the construction by {@link Observable#create(OnSubscribe)}
      * <p>
      * This can be used to decorate or replace the <code>onSubscribe</code> function or just perform extra
@@ -56,6 +60,8 @@ public abstract class RxJavaObservableExecutionHook {
     }
 
     /**
+     * 在 Observable.subscribe( )的时候调用，用于装饰或者中断这个订阅的发生。
+     *
      * Invoked before {@link Observable#subscribe(rx.Subscriber)} is about to be executed.
      * <p>
      * This can be used to decorate or replace the <code>onSubscribe</code> function or just perform extra
@@ -72,6 +78,10 @@ public abstract class RxJavaObservableExecutionHook {
     }
 
     /**
+     *
+     * 成功调用观察者的call方法后调用，
+     *
+     *
      * Invoked after successful execution of {@link Observable#subscribe(rx.Subscriber)} with returned
      * {@link Subscription}.
      * <p>
@@ -89,6 +99,8 @@ public abstract class RxJavaObservableExecutionHook {
     }
 
     /**
+     * 在Observable.subscribe( )执行失败时调用
+     *
      * Invoked after failed execution of {@link Observable#subscribe(Subscriber)} with thrown Throwable.
      * <p>
      * This is <em>not</em> errors emitted via {@link Subscriber#onError(Throwable)} but exceptions thrown when
@@ -104,6 +116,8 @@ public abstract class RxJavaObservableExecutionHook {
     }
 
     /**
+     * 在Observable.lift( )方法中调用
+     *
      * Invoked just as the operator functions is called to bind two operations together into a new
      * {@link Observable} and the return value is used as the lifted function
      * <p>

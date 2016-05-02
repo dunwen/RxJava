@@ -26,6 +26,9 @@ import rx.observers.Subscribers;
 
 /**
  * An Observable that emits a single constant scalar value to Subscribers.
+ *
+ * 只会发送一个值给它的subscriber的observable
+ *
  * <p>
  * This is a direct implementation of the Observable class to allow identifying it
  * in flatMap and bypass the subscription to it altogether.

@@ -31,6 +31,8 @@ import rx.plugins.RxJavaPlugins;
 import rx.subscriptions.CompositeSubscription;
 
 /**
+ * https://github.com/ReactiveX/RxJava/wiki/Backpressure
+ *
  * A utility class to create {@code OnSubscribe<T>} functions that respond correctly to back
  * pressure requests from subscribers. This is an improvement over
  * {@link rx.Observable#create(OnSubscribe) Observable.create(OnSubscribe)} which does not provide
